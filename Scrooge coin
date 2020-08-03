@@ -1,0 +1,71 @@
+import  java.security.PublicKey ;
+import  java.util.ArrayList ;
+import  java.util.Arrays ;
+import  java.util.Comparator ;
+import  java.util.Collections ;
+import  java.util.HashSet ;
+import  java.util.List ;
+import  java.util.Set ;
+@@ -99,35 +98,47 @@ private boolean isConsumedCoinAvailable (entrada de Transaction.Input) {
+	 * Ordenar las transacciones aceptadas por tarifa
+	 * /
+	pública  de transacción [] handleTxs ( Transacción [] possibleTxs ) {
+		Las matrices . sort (possibleTxs, new  Comparator < Transaction > () {
+			@Anular
+			public  int  compare ( Transaction  lhs , Transaction  rhs ) {
+				doble diff = calcTxFee (lhs) - calcTxFee (rhs);
+				si (diff >  0 ) {
+					retorno  1 ;
+				} else  if (diff <  0 ) {
+					volver  - 1 ;
+				} más {
+					devuelve  0 ;
+				}
+			}
+		});
+
+		List < Transaction > acceptTx =  new  ArrayList < Transaction > ();
+		for ( int i = possibleTxs . length -  1 ; i > =  0 ; i - ) {
+			Transacción tx = possibleTxs [i];
+		List < TransactionWithFee > acceptTx =  new  ArrayList < TransactionWithFee > ();
+		para ( Transacción tx : possibleTxs) {
+			if (isValidTx (tx)) {
+				aceptado Tx . agregar (tx);
+				TransactionWithFee txWithFee =  nuevo  TransactionWithFee (tx);
+				aceptado Tx . agregar (txWithFee);
+				removeConsumedCoinsFromPool (tx);
+				addCreatedCoinsToPool (tx);
+			}
+		}
+
+		Colecciones . sort (aceptadoTx);
+		Resultado de la transacción [] =  nueva  transacción [acceptTx . Talla()];
+		aceptado Tx . toArray (resultado);
+		for ( int i =  0 ; i < aceptadoTx . size (); i ++ ) {
+			resultado [i] = aceptadoTx . get (aceptado Tx . size () - i -  1 ) . tx;
+		}
+
+		resultado de retorno ;
+	}
+
+	La clase  TransactionWithFee  implementa  Comparable < TransactionWithFee > {
+		 Transacción pública tx;
+		 tarifa doble privada ;
+
+		Public  TransactionWithFee ( Transaction  tx ) {
+			esta . tx = tx;
+			esta . tarifa = calcTxFee (tx);
+		}
+
+		@Anular
+		public  int  compareTo ( TransactionWithFee  otherTx ) {
+			double diff = fee - otherTx . cuota;
+			si (diff >  0 ) {
+				retorno  1 ;
+			} else  if (diff <  0 ) {
+				volver  - 1 ;
+			} más {
+				devuelve  0 ;
+			}
+		}
+	}
